@@ -71,6 +71,7 @@ type RespStruct struct {
 }
 
 func HTTPHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("[%s] to [%s][%s] by [%s]\n", r.Method, r.Host, r.RequestURI, r.RemoteAddr)
 	w.Header().Set("Content-Type", "text/plain")
 	resp := RespStruct{
 		Host:       r.Host,
