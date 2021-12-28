@@ -63,6 +63,7 @@ func main() {
 }
 
 type RespStruct struct {
+	SNIHost    string
 	Host       string
 	Method     string
 	URL        string
@@ -71,9 +72,17 @@ type RespStruct struct {
 }
 
 func HTTPHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("[%s] to [%s][%s] by [%s]\n", r.Method, r.Host, r.RequestURI, r.RemoteAddr)
+	SNIHost := ""
+	if r.TLS != nil {
+		SNIHost = r.TLS.ServerName
+		log.Printf("[%s] to [SSL/%s][%s][%s] by [%s]\n", r.Method, SNIHost, r.Host, r.RequestURI, r.RemoteAddr)
+	} else {
+		log.Printf("[%s] to [%s][%s] by [%s]\n", r.Method, r.Host, r.RequestURI, r.RemoteAddr)
+	}
+
 	w.Header().Set("Content-Type", "text/plain")
 	resp := RespStruct{
+		SNIHost:    SNIHost,
 		Host:       r.Host,
 		Method:     r.Method,
 		URL:        r.RequestURI,
